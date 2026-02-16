@@ -1,0 +1,154 @@
+
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useUsuario } from '../../contexto/ContextoUsuario'
+import { NUMERO_TESTE } from '../../dados/config'
+
+/**
+ * Tela de Entrada do EndoFit
+ * Responsável por validar o número de telefone do usuário.
+ * 
+ * Nesta fase (Fase 1 - Mockado), validamos contra uma constante local.
+ * Na Fase 3, a validação será feita via chamada de API para o N8N/Google Sheets.
+ */
+export default function TelaEntrada() {
+    const [telefone, setTelefoneInput] = useState('')
+    const [erro, setErro] = useState(null)
+    const [carregando, setCarregando] = useState(false)
+
+    const { setTelefone } = useUsuario()
+    const navigate = useNavigate()
+
+    // Aplica máscara de telefone brasileiro: (XX) XXXXX-XXXX
+    const aplicarMascara = (valor) => {
+        // Remove tudo que não é dígito
+        let apenasNumeros = valor.replace(/\D/g, '')
+
+        // Limita a 11 dígitos
+        if (apenasNumeros.length > 11) {
+            apenasNumeros = apenasNumeros.slice(0, 11)
+        }
+
+        // Aplica a formatação
+        if (apenasNumeros.length <= 2) {
+            return apenasNumeros.replace(/^(\d{0,2})/, '($1')
+        }
+        if (apenasNumeros.length <= 7) {
+            return apenasNumeros.replace(/^(\d{2})(\d{0,5})/, '($1) $2')
+        }
+        return apenasNumeros.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
+    }
+
+    const handleChange = (e) => {
+        const valorMascarado = aplicarMascara(e.target.value)
+        setTelefoneInput(valorMascarado)
+        // Limpa erro ao digitar
+        if (erro) setErro(null)
+    }
+
+    const handleVerificar = () => {
+        // Remove formatação para validar apenas os números
+        const apenasNumeros = telefone.replace(/\D/g, '')
+
+        // Validação de preenchimento
+        if (!apenasNumeros) {
+            setErro('Digite seu número de telefone.')
+            return
+        }
+
+        setCarregando(true)
+        setErro(null)
+
+        // Simula tempo de requisição de rede
+        setTimeout(() => {
+            // Fase 3: Aqui faremos checkAssinatura(apenasNumeros) via N8N
+            if (apenasNumeros === NUMERO_TESTE) {
+                setTelefone(apenasNumeros)
+                navigate('/especialistas')
+            } else {
+                setErro('assinatura_nao_encontrada') // Código interno de erro para renderizar mensagem com link
+            }
+            setCarregando(false)
+        }, 1500)
+    }
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleVerificar()
+        }
+    }
+
+    return (
+        <div className="min-h-screen w-full flex flex-col items-center justify-center p-5 relative overflow-hidden bg-endo-preto">
+
+            {/* Elementos decorativos de fundo */}
+            <div className="absolute top-[-100px] right-[-100px] md:top-[-150px] md:right-[-150px] w-[600px] h-[600px] rounded-full border border-endo-laranja opacity-5 pointer-events-none" />
+            <div className="absolute bottom-[-100px] left-[-100px] md:bottom-[-150px] md:left-[-150px] w-[500px] h-[500px] rounded-full border border-endo-laranja opacity-5 pointer-events-none" />
+            <div className="absolute top-[20%] left-[10%] w-2 h-2 rounded-full bg-endo-laranja opacity-20 pointer-events-none" />
+            <div className="absolute bottom-[30%] right-[15%] w-3 h-3 rounded-full bg-endo-laranja opacity-20 pointer-events-none" />
+
+            {/* Conteúdo Central */}
+            <div className="z-10 w-full max-w-[430px] md:max-w-[480px] flex flex-col items-center">
+
+                {/* Header / Logo */}
+                <div className="mb-10 text-center">
+                    <h1 className="text-[2rem] md:text-[2.5rem] font-bold leading-tight">
+                        Endo<span className="text-endo-laranja">Fit</span>
+                    </h1>
+                    <p className="text-endo-texto-secundario text-base mt-2">
+                        Sua equipe fitness disponível 24h
+                    </p>
+                </div>
+
+                {/* Card de Entrada */}
+                <div className="w-full bg-endo-card rounded-2xl p-8 shadow-lg border border-endo-borda/30">
+                    <label className="block text-[#cccccc] text-sm mb-2">
+                        Seu número de telefone
+                    </label>
+
+                    <input
+                        type="tel"
+                        value={telefone}
+                        onChange={handleChange}
+                        onKeyDown={handleKeyDown}
+                        placeholder="(49) 99999-9999"
+                        className="w-full bg-endo-preto border border-endo-borda text-white rounded-lg px-4 py-[14px] text-base focus:outline-none focus:border-endo-laranja focus:ring-1 focus:ring-endo-laranja transition-all placeholder:text-endo-borda/50"
+                        disabled={carregando}
+                    />
+
+                    <button
+                        onClick={handleVerificar}
+                        disabled={carregando}
+                        className={`w-full mt-4 bg-endo-laranja text-white font-bold rounded-lg h-[52px] transition-colors flex items-center justify-center
+              ${carregando ? 'opacity-70 cursor-not-allowed' : 'hover:bg-endo-laranja-escuro'}
+            `}
+                    >
+                        {carregando ? 'Verificando...' : 'Acessar minha equipe →'}
+                    </button>
+
+                    {/* Mensagens de Erro */}
+                    {erro && (
+                        <div className="mt-4 text-center text-sm text-red-400 animate-fade-in">
+                            {erro === 'assinatura_nao_encontrada' ? (
+                                <>
+                                    Assinatura não encontrada.{' '}
+                                    <a href="#" className="underline text-endo-laranja hover:text-endo-laranja-escuro">
+                                        Clique aqui
+                                    </a>
+                                    {' '}para assinar e ter acesso.
+                                </>
+                            ) : (
+                                erro
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Footer */}
+                <p className="mt-8 text-endo-texto-secundario text-xs text-center max-w-[280px]">
+                    Transforme seu corpo com acompanhamento personalizado
+                </p>
+            </div>
+        </div>
+    )
+}
