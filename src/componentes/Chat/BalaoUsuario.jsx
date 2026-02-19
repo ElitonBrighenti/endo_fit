@@ -15,15 +15,11 @@ export default function BalaoUsuario({ mensagem, timestamp }) {
     const horaFormatada = new Date(timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 
     return (
-        <div className="flex w-full mb-4 justify-end animate-fade-in-up">
-            <div className="flex flex-col max-w-[80%] items-end">
-                {/* Balão */}
-                <div className="bg-endo-laranja/90 text-white px-4 py-3 rounded-l-2xl rounded-br-2xl text-left">
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{mensagem}</p>
-                </div>
-
+        <div className="flex justify-end mb-4">
+            <div className="bg-[#FF6B00] text-white p-3 rounded-lg max-w-[70%] relative">
+                <p className="text-sm">{mensagem}</p>
                 {/* Timestamp */}
-                <span className="text-[#cccccc] text-xs mt-1 mr-1">
+                <span className="text-[#666666] text-[0.75rem] mt-1 mr-1">
                     {horaFormatada}
                 </span>
             </div>

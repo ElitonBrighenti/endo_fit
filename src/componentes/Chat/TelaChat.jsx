@@ -118,32 +118,36 @@ export default function TelaChat() {
         <div className="flex flex-col min-h-screen bg-[#0f0f0f]">
 
             {/* Header Fixo - Adaptável Mobile/Desktop */}
-            <header className="fixed top-0 w-full md:max-w-[700px] left-1/2 -translate-x-1/2 h-16 bg-[#1a1a1a] border-b border-[#2a2a2a] flex items-center justify-between px-4 z-30 shadow-md md:border-x">
+            <header className="fixed top-0 w-full md:max-w-[700px] left-1/2 -translate-x-1/2 h-[64px] bg-[#1a1a1a] border-b border-[#2a2a2a] flex items-center justify-between px-6 z-30 shadow-md md:border-x">
+                {/* Esquerda: Botão Voltar */}
                 <button
                     onClick={() => navigate('/especialistas')}
-                    className="text-[#cccccc] text-sm flex items-center hover:text-white transition-colors"
+                    className="text-[#cccccc] text-sm hover:text-endo-laranja transition-colors flex items-center gap-1"
                 >
                     ← Minha Equipe
                 </button>
 
-                <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-2">
+                {/* Centro: Avatar + Nome + Cargo */}
+                <div className="flex flex-col items-center justify-center">
+                    <div className="flex items-center gap-2 mb-0.5">
                         <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                            className="w-[38px] h-[38px] rounded-full flex items-center justify-center text-sm border border-[#2a2a2a]"
                             style={{ backgroundColor: especialista.corAvatar }}
                         >
                             {especialista.emoji}
                         </div>
-                        <span className="text-white font-bold text-sm">{especialista.nome}</span>
+                        <span className="text-white font-bold text-[0.9rem]">{especialista.nome}</span>
                     </div>
-                    <span className="text-[#cccccc] text-xs">{especialista.cargo}</span>
+                    <span className="text-[#cccccc] text-[0.75rem] leading-none">{especialista.cargo}</span>
                 </div>
 
-                <div className="w-20"></div> {/* Espaçador para centralizar o título */}
+                {/* Direita: Espaço vazio para balancear */}
+                <div className="w-[100px] hidden md:block"></div>
+                <div className="w-8 md:hidden"></div>
             </header>
 
-            {/* Área de Mensagens - Centralizada no Desktop */}
-            <main className="flex-1 pt-20 pb-24 px-4 overflow-y-auto w-full md:max-w-[700px] md:mx-auto md:border-x md:border-[#2a2a2a]">
+            {/* Área de Mensagens */}
+            <main className="flex-1 pt-[80px] pb-[90px] px-4 md:px-[60px] overflow-y-auto w-full md:max-w-[700px] md:mx-auto md:border-x md:border-[#2a2a2a] scroll-smooth">
 
                 {mensagens.map((msg, index) => (
                     msg.role === 'agente' ? (

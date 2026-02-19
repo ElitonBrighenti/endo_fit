@@ -21,9 +21,10 @@ body,
   overflow-x: hidden;
 }
 
-/* Scrollbar Customizada */
+/* Scrollbar Personalizada */
 ::-webkit-scrollbar {
   width: 4px;
+  /* Fininha */
 }
 
 ::-webkit-scrollbar-track {
@@ -37,9 +38,24 @@ body,
 
 ::-webkit-scrollbar-thumb:hover {
   background: #FF6B00;
+  /* Laranja no hover */
 }
 
 /* Animações Globais */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  .animate-message-enter {
+    animation: messageEnter 0.2s ease-out forwards;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

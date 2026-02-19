@@ -28,7 +28,7 @@ export default function InputMensagem({ aoEnviar, desabilitado }) {
     }
 
     return (
-        <div className="fixed bottom-0 w-full md:max-w-[700px] left-1/2 -translate-x-1/2 bg-[#1a1a1a] border-t border-[#2a2a2a] p-3 md:p-4 z-20 md:border-x">
+        <div className="fixed bottom-0 w-full md:max-w-[700px] left-1/2 -translate-x-1/2 bg-[#1a1a1a] border-t border-[#2a2a2a] px-6 py-3 z-20 md:border-x">
             <div className="w-full flex items-center gap-2">
                 <input
                     type="text"
@@ -37,16 +37,16 @@ export default function InputMensagem({ aoEnviar, desabilitado }) {
                     onKeyDown={handleKeyDown}
                     placeholder="Digite sua mensagem..."
                     disabled={desabilitado}
-                    className="flex-1 bg-[#0f0f0f] border border-[#2a2a2a] text-white rounded-[24px] px-4 py-3 text-base focus:outline-none focus:border-endo-laranja focus:ring-1 focus:ring-endo-laranja transition-all placeholder:text-[#2a2a2a]"
+                    className="flex-1 bg-[#0f0f0f] border border-[#2a2a2a] text-white rounded-[24px] px-5 py-3 text-[16px] focus:outline-none focus:border-endo-laranja focus:ring-0 transition-all placeholder:text-[#666666]"
                 />
 
                 <button
                     onClick={handleEnviar}
                     disabled={!texto.trim() || desabilitado}
-                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-colors flex-shrink-0
+                    className={`w-[44px] h-[44px] rounded-full flex items-center justify-center transition-all flex-shrink-0 active:scale-95
             ${!texto.trim() || desabilitado
-                            ? 'bg-[#2a2a2a] text-[#666666] cursor-not-allowed'
-                            : 'bg-endo-laranja text-white hover:bg-endo-laranja-escuro font-bold'
+                            ? 'bg-[#2a2a2a] text-[#666666] cursor-not-allowed opacity-40'
+                            : 'bg-endo-laranja text-white hover:bg-[#cc5500]'
                         }
           `}
                 >
