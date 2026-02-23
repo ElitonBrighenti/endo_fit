@@ -26,7 +26,7 @@ export default function TelaEspecialistas() {
     }, [telefone, navigate])
 
     // Formata telefone para exibição: (XX) XXXXX-XXXX
-    const telefoneFormatado = telefone.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    const telefoneFormatado = telefone ? String(telefone).replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') : ''
 
     const handleLogout = () => {
         setTelefone('')

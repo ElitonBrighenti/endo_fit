@@ -1,8 +1,6 @@
-
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUsuario } from '../../contexto/ContextoUsuario'
-import { NUMERO_TESTE } from '../../dados/config'
 
 /**
  * Tela de Entrada do EndoFit
@@ -46,30 +44,55 @@ export default function TelaEntrada() {
         if (erro) setErro(null)
     }
 
-    const handleVerificar = () => {
-        // Remove formatação para validar apenas os números
-        const apenasNumeros = telefone.replace(/\D/g, '')
+    const handleVerificar = async () => {
+        // Limpar erro anterior
+        setErro('')
 
-        // Validação de preenchimento
-        if (!apenasNumeros) {
+        // Validação de preenchimento e tamanho mínimo
+        const apenasNumeros = telefone.replace(/\D/g, '')
+        if (!apenasNumeros || apenasNumeros.length < 10) {
             setErro('Digite seu número de telefone.')
             return
         }
 
+        // Ativar loading
         setCarregando(true)
-        setErro(null)
 
-        // Simula tempo de requisição de rede
-        setTimeout(() => {
-            // Fase 3: Aqui faremos checkAssinatura(apenasNumeros) via N8N
-            if (apenasNumeros === NUMERO_TESTE) {
-                setTelefone(apenasNumeros)
+        try {
+            // Chamar webhook N8N
+            const resposta = await fetch('https://n8n.forgedigital.cloud/webhook/endofit/validar-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    telefone: apenasNumeros
+                })
+            })
+
+            const dados = await resposta.json()
+
+            // Processar resposta
+            if (resposta.ok && dados.valido) {
+                // Login válido - salvar dados no contexto
+                setTelefone(dados.telefone)
                 navigate('/especialistas')
             } else {
-                setErro('assinatura_nao_encontrada') // Código interno de erro para renderizar mensagem com link
+                // Login inválido
+                if (dados.status === 'nao_encontrado') {
+                    setErro('assinatura_nao_encontrada')
+                } else if (dados.status === 'inativo') {
+                    setErro('Sua assinatura está inativa. Reative para continuar.')
+                } else {
+                    setErro(dados.mensagem || 'Erro ao validar assinatura.')
+                }
             }
+        } catch (erro) {
+            console.error('Erro ao validar:', erro)
+            setErro('Erro ao conectar com o servidor. Tente novamente.')
+        } finally {
             setCarregando(false)
-        }, 1500)
+        }
     }
 
     const handleKeyDown = (e) => {
